@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSI AB Corp — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --solar-gold: #F5A623; --solar-dark: #1A2332; --solar-mid: #243447;
+      --solar-line: #2E4060; --text-main: #E8EDF3; --text-muted: #7A93B0;
+      --card-bg: #1E2D40; --input-bg: #162233;
+      --success: #3DBE7A; --warning: #F5A623; --danger: #E05252; --info: #4A9EFF;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--solar-dark); color: var(--text-main); min-height: 100vh; }
+    header { background: var(--solar-mid); border-bottom: 2px solid var(--solar-gold); padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { width: 36px; height: 36px; background: var(--solar-gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-text { font-size: 18px; font-weight: 700; }
+    .logo-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+    nav a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all .2s; }
+    nav a:hover, nav a.active { color: var(--solar-gold); background: rgba(245,166,35,.1); }
+    .page { padding: 36px 32px; }
+    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .kpi-card { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .kpi-card.total::before { background: var(--info); }
+    .kpi-card.abierto::before { background: var(--warning); }
+    .kpi-card.progreso::before { background: var(--info); }
+    .kpi-card.cerrado::before { background: var(--success); }
+    .kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 10px; }
+    .kpi-num { font-size: 36px; font-weight: 700; line-height: 1; }
+    .kpi-card.total .kpi-num { color: var(--info); }
+    .kpi-card.abierto .kpi-num { color: var(--warning); }
+    .kpi-card.progreso .kpi-num { color: var(--info); }
+    .kpi-card.cerrado .kpi-num { color: var(--success); }
+    .filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+    .filters input, .filters select { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 8px; color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 13px; padding: 9px 14px; outline: none; transition: border-color .2s; }
+    .filters input:focus, .filters select:focus { border-color: var(--solar-gold); }
+    .filters input { flex: 1; min-width: 180px; }
+    .filters select option { background: var(--solar-dark); }
+    .table-wrap { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 14px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 900px; }
+    thead th { background: var(--solar-mid); color: var(--text-muted); font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 14px 16px; text-align: left; white-space: nowrap; }
+    tbody tr { border-top: 1px solid var(--solar-line); transition: background .15s; }
+    tbody tr:hover { background: rgba(46,64,96,.4); }
+    td { padding: 12px 16px; font-size: 13px; vertical-align: middle; }
+    .badge { display: inline-block; border-radius: 20px; font-size: 11px; font-weight: 700; padding: 3px 10px; letter-spacing: .4px; }
+    .badge-abierto { background: rgba(245,166,35,.15); color: var(--warning); }
+    .badge-progreso { background: rgba(74,158,255,.15); color: var(--info); }
+    .badge-cerrado { background: rgba(61,190,122,.15); color: var(--success); }
+    .badge-sinasignar { background: rgba(224,82,82,.15); color: var(--danger); }
+    .badge-baja { background: rgba(61,190,122,.12); color: #3DBE7A; }
+    .badge-media { background: rgba(245,166,35,.12); color: var(--solar-gold); }
+    .badge-alta { background: rgba(224,82,82,.12); color: var(--danger); }
+    .dias-badge { font-weight: 700; font-size: 13px; }
+    .dias-ok { color: var(--success); }
+    .dias-warn { color: var(--warning); }
+    .dias-bad { color: var(--danger); }
+    .action-btn { background: none; border: 1px solid var(--solar-line); border-radius: 6px; color: var(--text-muted); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; padding: 5px 10px; margin-right: 4px; margin-bottom: 2px; transition: all .15s; }
+    .action-btn:hover { border-color: var(--solar-gold); color: var(--solar-gold); }
+    .action-btn.start:hover { border-color: var(--info); color: var(--info); }
+    .action-btn.close-btn:hover { border-color: var(--success); color: var(--success); }
+    .action-btn.del:hover { border-color: var(--danger); color: var(--danger); }
+    /* Inline select para asignar ingeniero */
+    .assign-select { background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 6px; color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 12px; padding: 4px 8px; outline: none; cursor: pointer; max-width: 130px; }
+    .assign-select:focus { border-color: var(--solar-gold); }
+    .assign-select option { background: var(--solar-dark); }
+    .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty .icon { font-size: 48px; margin-bottom: 14px; }
+    .empty p { font-size: 15px; }
+    .empty a { color: var(--solar-gold); text-decoration: none; font-weight: 600; }
+    /* Modal */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 200; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 16px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .modal-row { display: grid; grid-template-columns: 150px 1fr; gap: 8px 16px; align-items: start; margin-bottom: 10px; }
+    .modal-key { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; padding-top: 2px; }
+    .modal-val { font-size: 14px; color: var(--text-main); }
+    .modal-desc { margin: 16px 0; }
+    .modal-desc p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+    .modal-btn { border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; padding: 10px 18px; transition: opacity .2s; border: none; }
+    .modal-btn:hover { opacity: .85; }
+    .modal-btn.primary { background: var(--solar-gold); color: var(--solar-dark); }
+    .modal-btn.secondary { background: var(--solar-mid); color: var(--text-main); border: 1px solid var(--solar-line); }
+    .modal-btn.success { background: var(--success); color: #fff; }
+    .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--success); color: #fff; border-radius: 10px; padding: 14px 24px; font-weight: 600; font-size: 14px; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 999; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 768px) { .page { padding: 24px 16px; } .kpi-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">☀️</div>
+    <div>
+      <div class="logo-text">CSI AB Corp</div>
+      <div class="logo-sub">Gestión de Incidencias</div>
+    </div>
+  </div>
+  <nav>
+    <a href="index.html">Nuevo Reporte</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+  </nav>
+</header>
+
+<div class="page">
+  <div class="page-title">Dashboard de Incidencias</div>
+  <div class="page-sub" id="last-update">—</div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card total"><div class="kpi-label">Total reportes</div><div class="kpi-num" id="kpi-total">0</div></div>
+    <div class="kpi-card abierto"><div class="kpi-label">Abiertos</div><div class="kpi-num" id="kpi-abierto">0</div></div>
+    <div class="kpi-card progreso"><div class="kpi-label">En progreso</div><div class="kpi-num" id="kpi-progreso">0</div></div>
+    <div class="kpi-card cerrado"><div class="kpi-label">Cerrados</div><div class="kpi-num" id="kpi-cerrado">0</div></div>
+  </div>
+
+  <div class="filters">
+    <input type="text" id="buscar" placeholder="🔍  Buscar cliente, ID o tipo…" oninput="renderTabla()"/>
+    <select id="filtro-estado" onchange="renderTabla()">
+      <option value="">Todos los estados</option>
+      <option>Abierto</option>
+      <option>En progreso</option>
+      <option>Cerrado</option>
+    </select>
+    <select id="filtro-prioridad" onchange="renderTabla()">
+      <option value="">Todas las prioridades</option>
+      <option>Baja</option>
+      <option>Media</option>
+      <option>Alta</option>
+    </select>
+    <select id="filtro-ingeniero" onchange="renderTabla()">
+      <option value="">Todos los ingenieros</option>
+      <option>SAUL</option>
+      <option>EDEL</option>
+      <option>AMADO</option>
+      <option>CECILIA</option>
+      <option>ERICK</option>
+      <option>PAUL</option>
+      <option>MILCIADES</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Tipo</th>
+          <th>Prioridad</th>
+          <th>Fuente</th>
+          <th>Ingeniero asignado</th>
+          <th>Fecha reporte</th>
+          <th>Inicio trabajo</th>
+          <th>Fecha solución</th>
+          <th>Días</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body"></tbody>
+    </table>
+    <div class="empty" id="empty-state" style="display:none;">
+      <div class="icon">📋</div>
+      <p>No hay reportes aún.<br/><a href="index.html">Crear el primer reporte →</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <h2 id="modal-title"></h2>
+    <div id="modal-content"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const INGENIEROS = ['SAUL','EDEL','AMADO','CECILIA','ERICK','PAUL','MILCIADES'];
+  let tickets = [];
+
+  function load() {
+    tickets = JSON.parse(localStorage.getItem('csi_tickets') || '[]');
+    updateKPIs();
+    renderTabla();
+    document.getElementById('last-update').textContent =
+      'Última actualización: ' + new Date().toLocaleString('es-MX');
+  }
+
+  function updateKPIs() {
+    document.getElementById('kpi-total').textContent    = tickets.length;
+    document.getElementById('kpi-abierto').textContent  = tickets.filter(t => t.estado === 'Abierto').length;
+    document.getElementById('kpi-progreso').textContent = tickets.filter(t => t.estado === 'En progreso').length;
+    document.getElementById('kpi-cerrado').textContent  = tickets.filter(t => t.estado === 'Cerrado').length;
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function calcDias(t) {
+    if (!t.fechaReporte) return null;
+    const end = t.fechaSolucion ? new Date(t.fechaSolucion) : new Date();
+    return Math.floor((end - new Date(t.fechaReporte)) / 86400000);
+  }
+
+  function diasClass(d, cerrado) {
+    if (!cerrado) return d > 7 ? 'dias-bad' : d > 3 ? 'dias-warn' : 'dias-ok';
+    return d <= 3 ? 'dias-ok' : d <= 7 ? 'dias-warn' : 'dias-bad';
+  }
+
+  function asignarIngeniero(id, valor) {
+    const t = tickets.find(t => t.id === id);
+    if (!t) return;
+    t.ingeniero = valor || null;
+    save(false);
+    showToast(valor ? id + ' asignado a ' + valor : id + ' sin asignar');
+  }
+
+  function renderTabla() {
+    const buscar    = document.getElementById('buscar').value.toLowerCase();
+    const estado    = document.getElementById('filtro-estado').value;
+    const prioridad = document.getElementById('filtro-prioridad').value;
+    const ingeniero = document.getElementById('filtro-ingeniero').value;
+
+    let lista = tickets.filter(t => {
+      const txt = (t.id + t.cliente + t.tipo + t.descripcion).toLowerCase();
+      return (!buscar    || txt.includes(buscar))
+          && (!estado    || t.estado === estado)
+          && (!prioridad || t.prioridad === prioridad)
+          && (!ingeniero || t.ingeniero === ingeniero);
+    });
+
+    const tbody = document.getElementById('tabla-body');
+    const empty = document.getElementById('empty-state');
+
+    if (lista.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = lista.map(t => {
+      const dias    = calcDias(t);
+      const dClass  = dias !== null ? diasClass(dias, t.estado === 'Cerrado') : '';
+      const eBadge  = { 'Abierto':'badge-abierto','En progreso':'badge-progreso','Cerrado':'badge-cerrado' }[t.estado] || 'badge-abierto';
+      const pBadge  = { 'Baja':'badge-baja','Media':'badge-media','Alta':'badge-alta' }[t.prioridad] || '';
+
+      // Selector de ingeniero inline
+      const ingOpts = ['', ...INGENIEROS].map(i =>
+        `<option value="${i}" ${t.ingeniero === i ? 'selected' : ''}>${i || '— Sin asignar —'}</option>`
+      ).join('');
+      const ingCell = `<select class="assign-select" onchange="asignarIngeniero('${t.id}', this.value)">${ingOpts}</select>`;
+
+      const btnInicio = t.estado === 'Abierto'
+        ? `<button class="action-btn start" onclick="marcarInicio('${t.id}')">▶ Iniciar</button>` : '';
+      const btnCerrar = t.estado === 'En progreso'
+        ? `<button class="action-btn close-btn" onclick="marcarCierre('${t.id}')">✓ Cerrar</button>` : '';
+      const btnVer    = `<button class="action-btn" onclick="verDetalle('${t.id}')">👁 Ver</button>`;
+      const btnDel    = `<button class="action-btn del" onclick="eliminar('${t.id}')">✕</button>`;
+
+      return `<tr>
+        <td><strong style="color:var(--solar-gold)">${t.id}</strong></td>
+        <td>${t.cliente}</td>
+        <td style="max-width:120px;word-break:break-word">${t.tipo}</td>
+        <td><span class="badge ${pBadge}">${t.prioridad}</span></td>
+        <td style="font-size:12px;color:var(--text-muted)">${t.fuente}</td>
+        <td>${ingCell}</td>
+        <td>${fmtDate(t.fechaReporte)}</td>
+        <td>${fmtDate(t.fechaInicio)}</td>
+        <td>${fmtDate(t.fechaSolucion)}</td>
+        <td class="dias-badge ${dClass}">${dias !== null ? dias + (t.estado === 'Cerrado' ? ' d' : ' d ⏳') : '—'}</td>
+        <td><span class="badge ${eBadge}">${t.estado}</span></td>
+        <td>${btnInicio}${btnCerrar}${btnVer}${btnDel}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function marcarInicio(id) {
+    const t = tickets.find(t => t.id === id);
+    if (!t) return;
+    t.estado = 'En progreso';
+    t.fechaInicio = new Date().toISOString();
+    save(); showToast(id + ' marcado como En progreso');
+  }
+
+  function marcarCierre(id) {
+    const t = tickets.find(t => t.id === id);
+    if (!t) return;
+    t.estado = 'Cerrado';
+    t.fechaSolucion = new Date().toISOString();
+    save(); showToast(id + ' cerrado correctamente');
+  }
+
+  function eliminar(id) {
+    if (!confirm('¿Eliminar el ticket ' + id + '? Esta acción no se puede deshacer.')) return;
+    tickets = tickets.filter(t => t.id !== id);
+    save(); showToast(id + ' eliminado');
+  }
+
+  function verDetalle(id) {
+    const t = tickets.find(t => t.id === id);
+    if (!t) return;
+    const dias = calcDias(t);
+
+    document.getElementById('modal-title').textContent = t.id + ' — ' + t.cliente;
+    document.getElementById('modal-content').innerHTML = `
+      <div class="modal-row"><div class="modal-key">Tipo</div><div class="modal-val">${t.tipo}</div></div>
+      <div class="modal-row"><div class="modal-key">Fuente</div><div class="modal-val">${t.fuente}</div></div>
+      <div class="modal-row"><div class="modal-key">Prioridad</div><div class="modal-val">${t.prioridad}</div></div>
+      <div class="modal-row"><div class="modal-key">Ingeniero</div><div class="modal-val">${t.ingeniero || 'Sin asignar'}</div></div>
+      <div class="modal-row"><div class="modal-key">Estado</div><div class="modal-val">${t.estado}</div></div>
+      <div class="modal-row"><div class="modal-key">Fecha reporte</div><div class="modal-val">${fmtDate(t.fechaReporte)}</div></div>
+      <div class="modal-row"><div class="modal-key">Inicio trabajo</div><div class="modal-val">${fmtDate(t.fechaInicio)}</div></div>
+      <div class="modal-row"><div class="modal-key">Fecha solución</div><div class="modal-val">${fmtDate(t.fechaSolucion)}</div></div>
+      <div class="modal-row"><div class="modal-key">Días transcurridos</div><div class="modal-val">${dias !== null ? dias + ' días' : '—'}</div></div>
+      <div class="modal-desc"><div class="modal-key" style="margin-bottom:8px">Descripción</div><p>${t.descripcion || '—'}</p></div>
+      <div class="modal-desc"><div class="modal-key" style="margin-bottom:8px">Comentarios</div><p>${t.comentarios || '—'}</p></div>
+    `;
+
+    const actions = document.getElementById('modal-actions');
+    actions.innerHTML = '';
+    if (t.estado === 'Abierto') {
+      const b = document.createElement('button');
+      b.className = 'modal-btn primary'; b.textContent = '▶ Marcar como En progreso';
+      b.onclick = () => { marcarInicio(id); closeModal(); };
+      actions.appendChild(b);
+    }
+    if (t.estado === 'En progreso') {
+      const b = document.createElement('button');
+      b.className = 'modal-btn success'; b.textContent = '✓ Marcar como Cerrado';
+      b.onclick = () => { marcarCierre(id); closeModal(); };
+      actions.appendChild(b);
+    }
+    const bc = document.createElement('button');
+    bc.className = 'modal-btn secondary'; bc.textContent = 'Cerrar';
+    bc.onclick = closeModal;
+    actions.appendChild(bc);
+
+    document.getElementById('modal-backdrop').classList.add('open');
+  }
+
+  function closeModal(e) {
+    if (!e || e.target === document.getElementById('modal-backdrop'))
+      document.getElementById('modal-backdrop').classList.remove('open');
+  }
+
+  function save(rerender = true) {
+    localStorage.setItem('csi_tickets', JSON.stringify(tickets));
+    updateKPIs();
+    if (rerender) renderTabla();
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✓ ' + msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  load();
+</script>
+</body>
+</html>

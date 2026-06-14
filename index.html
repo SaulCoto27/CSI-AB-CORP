@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSI AB Corp — Nuevo Reporte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --solar-gold: #F5A623; --solar-dark: #1A2332; --solar-mid: #243447;
+      --solar-line: #2E4060; --text-main: #E8EDF3; --text-muted: #7A93B0;
+      --danger: #E05252; --success: #3DBE7A; --card-bg: #1E2D40; --input-bg: #162233;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--solar-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: var(--solar-mid); border-bottom: 2px solid var(--solar-gold); padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { width: 36px; height: 36px; background: var(--solar-gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-text { font-size: 18px; font-weight: 700; }
+    .logo-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+    nav a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all .2s; }
+    nav a:hover, nav a.active { color: var(--solar-gold); background: rgba(245,166,35,.1); }
+    main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 48px 24px; }
+    .form-card { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 16px; padding: 40px 44px; width: 100%; max-width: 620px; }
+    .form-header { margin-bottom: 32px; }
+    .form-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .form-header p { font-size: 14px; color: var(--text-muted); }
+    .field { margin-bottom: 22px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); letter-spacing: .6px; text-transform: uppercase; margin-bottom: 8px; }
+    label span.req { color: var(--solar-gold); margin-left: 3px; }
+    input, select, textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 8px; color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 14px; padding: 11px 14px; transition: border-color .2s, box-shadow .2s; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--solar-gold); box-shadow: 0 0 0 3px rgba(245,166,35,.15); }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    select option { background: var(--solar-dark); }
+    textarea { resize: vertical; min-height: 90px; }
+    .tipo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .tipo-btn { background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 8px; color: var(--text-muted); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 6px; text-align: center; transition: all .2s; }
+    .tipo-btn:hover { border-color: var(--solar-gold); color: var(--solar-gold); }
+    .tipo-btn.selected { background: rgba(245,166,35,.12); border-color: var(--solar-gold); color: var(--solar-gold); font-weight: 600; }
+    #tipo-hidden { display: none; }
+    .prio-row { display: flex; gap: 10px; }
+    .prio-btn { flex: 1; background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 10px; text-align: center; transition: all .2s; color: var(--text-muted); }
+    .prio-btn[data-val="Baja"].selected { background: rgba(61,190,122,.12); border-color: #3DBE7A; color: #3DBE7A; }
+    .prio-btn[data-val="Media"].selected { background: rgba(245,166,35,.12); border-color: var(--solar-gold); color: var(--solar-gold); }
+    .prio-btn[data-val="Alta"].selected { background: rgba(224,82,82,.12); border-color: var(--danger); color: var(--danger); }
+    #prioridad-hidden { display: none; }
+    .divider { border: none; border-top: 1px solid var(--solar-line); margin: 28px 0; }
+    .btn-submit { width: 100%; background: var(--solar-gold); border: none; border-radius: 10px; color: var(--solar-dark); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; padding: 14px; transition: opacity .2s, transform .1s; }
+    .btn-submit:hover { opacity: .9; }
+    .btn-submit:active { transform: scale(.98); }
+    .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--success); color: #fff; border-radius: 10px; padding: 14px 24px; font-weight: 600; font-size: 14px; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 999; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 600px) { .form-card { padding: 28px 20px; } .tipo-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">☀️</div>
+    <div>
+      <div class="logo-text">CSI AB Corp</div>
+      <div class="logo-sub">Gestión de Incidencias</div>
+    </div>
+  </div>
+  <nav>
+    <a href="index.html" class="active">Nuevo Reporte</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
+</header>
+
+<main>
+  <div class="form-card">
+    <div class="form-header">
+      <h1>Crear nuevo reporte</h1>
+      <p>Completa los campos para registrar una incidencia en el sistema.</p>
+    </div>
+
+    <div class="field">
+      <label>Nombre del cliente <span class="req">*</span></label>
+      <input type="text" id="cliente" placeholder="Ej. Empresa Solar Norte S.A."/>
+    </div>
+
+    <div class="field">
+      <label>Tipo de problema <span class="req">*</span></label>
+      <div class="tipo-grid">
+        <button class="tipo-btn" data-val="Alarma sistema">⚡ Alarma sistema</button>
+        <button class="tipo-btn" data-val="Filtración techo">💧 Filtración techo</button>
+        <button class="tipo-btn" data-val="Generación baja">📉 Generación baja</button>
+        <button class="tipo-btn" data-val="Factura alta">🧾 Factura alta</button>
+        <button class="tipo-btn" data-val="Fallo inversor">🔌 Fallo inversor</button>
+        <button class="tipo-btn" data-val="Otro">📋 Otro</button>
+      </div>
+      <input type="text" id="tipo-hidden"/>
+    </div>
+
+    <div class="field">
+      <label>Fuente del reporte <span class="req">*</span></label>
+      <select id="fuente">
+        <option value="">Selecciona la fuente…</option>
+        <option>Fusion Solar</option>
+        <option>Solid Cloud</option>
+        <option>Reporte directo del cliente</option>
+        <option>Franklin</option>
+        <option>Sergio</option>
+        <option>Nestor</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Prioridad <span class="req">*</span></label>
+      <div class="prio-row">
+        <button class="prio-btn" data-val="Baja">Baja</button>
+        <button class="prio-btn" data-val="Media">Media</button>
+        <button class="prio-btn" data-val="Alta">Alta</button>
+      </div>
+      <input type="text" id="prioridad-hidden"/>
+    </div>
+
+    <div class="field">
+      <label>Descripción del problema <span class="req">*</span></label>
+      <textarea id="descripcion" placeholder="Describe detalladamente la incidencia reportada…"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Comentarios adicionales</label>
+      <textarea id="comentarios" placeholder="Observaciones, contexto extra…" style="min-height:60px;"></textarea>
+    </div>
+
+    <hr class="divider"/>
+    <button class="btn-submit" onclick="crearTicket()">Registrar reporte →</button>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  document.querySelectorAll('.tipo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('tipo-hidden').value = btn.dataset.val;
+    });
+  });
+
+  document.querySelectorAll('.prio-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.prio-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('prioridad-hidden').value = btn.dataset.val;
+    });
+  });
+
+  function crearTicket() {
+    const cliente     = document.getElementById('cliente').value.trim();
+    const tipo        = document.getElementById('tipo-hidden').value;
+    const fuente      = document.getElementById('fuente').value;
+    const prioridad   = document.getElementById('prioridad-hidden').value;
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const comentarios = document.getElementById('comentarios').value.trim();
+
+    if (!cliente || !tipo || !fuente || !prioridad || !descripcion) {
+      alert('Por favor completa todos los campos obligatorios (*).');
+      return;
+    }
+
+    const tickets = JSON.parse(localStorage.getItem('csi_tickets') || '[]');
+    const id = 'CSI-' + String(tickets.length + 1).padStart(3, '0');
+
+    tickets.push({
+      id, cliente, tipo, fuente, prioridad,
+      ingeniero: null,
+      descripcion, comentarios,
+      fechaReporte: new Date().toISOString(),
+      fechaInicio: null,
+      fechaSolucion: null,
+      estado: 'Abierto'
+    });
+
+    localStorage.setItem('csi_tickets', JSON.stringify(tickets));
+
+    document.getElementById('cliente').value = '';
+    document.getElementById('tipo-hidden').value = '';
+    document.getElementById('fuente').value = '';
+    document.getElementById('prioridad-hidden').value = '';
+    document.getElementById('descripcion').value = '';
+    document.getElementById('comentarios').value = '';
+    document.querySelectorAll('.tipo-btn, .prio-btn').forEach(b => b.classList.remove('selected'));
+
+    const toast = document.getElementById('toast');
+    toast.textContent = '✓ ' + id + ' registrado correctamente';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
