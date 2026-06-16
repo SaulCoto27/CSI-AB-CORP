@@ -19,8 +19,11 @@
     .logo-icon { width: 36px; height: 36px; background: var(--solar-gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
     .logo-text { font-size: 18px; font-weight: 700; }
     .logo-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+    nav { display: flex; gap: 4px; align-items: center; }
     nav a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 16px; border-radius: 6px; transition: all .2s; }
     nav a:hover, nav a.active { color: var(--solar-gold); background: rgba(245,166,35,.1); }
+    .nav-hist { background: rgba(224,82,82,.1); color: var(--danger); border: 1px solid rgba(224,82,82,.3); border-radius: 6px; font-size: 13px; font-weight: 600; padding: 7px 14px; cursor: pointer; transition: all .2s; }
+    .nav-hist:hover { background: rgba(224,82,82,.2); }
     .page { padding: 36px 32px; }
     .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
     .page-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
@@ -43,11 +46,11 @@
     .filters input { flex: 1; min-width: 180px; }
     .filters select option { background: var(--solar-dark); }
     .table-wrap { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 14px; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 950px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1050px; }
     thead th { background: var(--solar-mid); color: var(--text-muted); font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 14px 16px; text-align: left; white-space: nowrap; }
     tbody tr { border-top: 1px solid var(--solar-line); transition: background .15s; }
     tbody tr:hover { background: rgba(46,64,96,.4); }
-    td { padding: 12px 16px; font-size: 13px; vertical-align: middle; }
+    td { padding: 11px 16px; font-size: 13px; vertical-align: middle; }
     .badge { display: inline-block; border-radius: 20px; font-size: 11px; font-weight: 700; padding: 3px 10px; }
     .badge-abierto { background: rgba(245,166,35,.15); color: var(--warning); }
     .badge-progreso { background: rgba(74,158,255,.15); color: var(--info); }
@@ -57,34 +60,54 @@
     .badge-alta { background: rgba(224,82,82,.12); color: var(--danger); }
     .dias-badge { font-weight: 700; font-size: 13px; }
     .dias-ok { color: var(--success); } .dias-warn { color: var(--warning); } .dias-bad { color: var(--danger); }
+    /* Inline selects / inputs */
+    .inline-sel, .inline-date {
+      background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 6px;
+      color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 12px;
+      padding: 4px 8px; outline: none; cursor: pointer; transition: border-color .2s;
+    }
+    .inline-sel { max-width: 130px; }
+    .inline-date { max-width: 140px; color-scheme: dark; }
+    .inline-sel:focus, .inline-date:focus { border-color: var(--solar-gold); }
+    .inline-sel option { background: var(--solar-dark); }
     .action-btn { background: none; border: 1px solid var(--solar-line); border-radius: 6px; color: var(--text-muted); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; padding: 5px 10px; margin-right: 4px; margin-bottom: 2px; transition: all .15s; }
     .action-btn:hover { border-color: var(--solar-gold); color: var(--solar-gold); }
-    .action-btn.start:hover { border-color: var(--info); color: var(--info); }
-    .action-btn.close-btn:hover { border-color: var(--success); color: var(--success); }
     .action-btn.del:hover { border-color: var(--danger); color: var(--danger); }
-    .assign-select { background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 6px; color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 12px; padding: 4px 8px; outline: none; cursor: pointer; max-width: 130px; }
-    .assign-select:focus { border-color: var(--solar-gold); }
-    .assign-select option { background: var(--solar-dark); }
     .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .empty .icon { font-size: 48px; margin-bottom: 14px; }
     .empty p { font-size: 15px; }
     .empty a { color: var(--solar-gold); text-decoration: none; font-weight: 600; }
     .loading { text-align: center; padding: 60px; color: var(--text-muted); font-size: 15px; }
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 200; align-items: center; justify-content: center; }
+
+    /* ── MODAL ── */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
     .modal-backdrop.open { display: flex; }
-    .modal { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 16px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+    .modal { background: var(--card-bg); border: 1px solid var(--solar-line); border-radius: 16px; padding: 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
     .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
     .modal-row { display: grid; grid-template-columns: 150px 1fr; gap: 8px 16px; align-items: start; margin-bottom: 10px; }
-    .modal-key { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; padding-top: 2px; }
+    .modal-key { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; padding-top: 3px; }
     .modal-val { font-size: 14px; }
-    .modal-desc { margin: 16px 0; }
-    .modal-desc p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .modal-section { margin: 18px 0 10px; border-top: 1px solid var(--solar-line); padding-top: 16px; }
+    .modal-section-title { font-size: 12px; color: var(--text-muted); font-weight: 700; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 10px; }
+    .modal-textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 8px; color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 13px; padding: 10px 12px; resize: vertical; min-height: 80px; outline: none; transition: border-color .2s; }
+    .modal-textarea:focus { border-color: var(--solar-gold); }
+    .modal-date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .modal-date-label { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 6px; }
+    .modal-date-input { width: 100%; background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 8px; color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 13px; padding: 9px 12px; outline: none; color-scheme: dark; transition: border-color .2s; }
+    .modal-date-input:focus { border-color: var(--solar-gold); }
+    .modal-select { width: 100%; background: var(--input-bg); border: 1px solid var(--solar-line); border-radius: 8px; color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 13px; padding: 9px 12px; outline: none; }
+    .modal-select option { background: var(--solar-dark); }
     .modal-actions { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
-    .modal-btn { border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; padding: 10px 18px; border: none; transition: opacity .2s; }
+    .modal-btn { border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; padding: 10px 20px; border: none; transition: opacity .2s; }
     .modal-btn:hover { opacity: .85; }
     .modal-btn.primary { background: var(--solar-gold); color: var(--solar-dark); }
     .modal-btn.secondary { background: var(--solar-mid); color: var(--text-main); border: 1px solid var(--solar-line); }
-    .modal-btn.success { background: var(--success); color: #fff; }
+
+    /* ── HISTORIAL ── */
+    .hist-badge { background: rgba(224,82,82,.12); color: var(--danger); border-radius: 20px; font-size: 11px; font-weight: 700; padding: 3px 10px; }
+    .restore-btn { background: none; border: 1px solid var(--success); border-radius: 6px; color: var(--success); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; padding: 5px 10px; transition: all .15s; }
+    .restore-btn:hover { background: rgba(61,190,122,.1); }
+
     .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--success); color: #fff; border-radius: 10px; padding: 14px 24px; font-weight: 600; font-size: 14px; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 999; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     @media (max-width: 768px) { .page { padding: 24px 16px; } .kpi-grid { grid-template-columns: 1fr 1fr; } }
@@ -102,6 +125,7 @@
   <nav>
     <a href="index.html">Nuevo Reporte</a>
     <a href="dashboard.html" class="active">Dashboard</a>
+    <button class="nav-hist" onclick="abrirHistorial()">🗑 Historial eliminados</button>
   </nav>
 </header>
 
@@ -120,9 +144,7 @@
     <input type="text" id="buscar" placeholder="🔍  Buscar cliente, ID o tipo…" oninput="renderTabla()"/>
     <select id="filtro-estado" onchange="renderTabla()">
       <option value="">Todos los estados</option>
-      <option>Abierto</option>
-      <option>En progreso</option>
-      <option>Cerrado</option>
+      <option>Abierto</option><option>En progreso</option><option>Cerrado</option>
     </select>
     <select id="filtro-prioridad" onchange="renderTabla()">
       <option value="">Todas las prioridades</option>
@@ -141,8 +163,8 @@
       <thead>
         <tr>
           <th>ID</th><th>Cliente</th><th>Tipo</th><th>Prioridad</th><th>Fuente</th>
-          <th>Ingeniero asignado</th><th>Fecha reporte</th><th>Inicio trabajo</th>
-          <th>Fecha solución</th><th>Días</th><th>Estado</th><th>Acciones</th>
+          <th>Ingeniero</th><th>Estado</th><th>Fecha reporte</th>
+          <th>Inicio trabajo</th><th>Fecha solución</th><th>Días</th><th>Acciones</th>
         </tr>
       </thead>
       <tbody id="tabla-body"></tbody>
@@ -154,11 +176,68 @@
   </div>
 </div>
 
-<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+<!-- Modal editar ticket -->
+<div class="modal-backdrop" id="modal-editar" onclick="closeModalEditar(event)">
   <div class="modal">
-    <h2 id="modal-title"></h2>
-    <div id="modal-content"></div>
-    <div class="modal-actions" id="modal-actions"></div>
+    <h2 id="modal-titulo"></h2>
+
+    <div class="modal-row"><div class="modal-key">Cliente</div><div class="modal-val" id="md-cliente"></div></div>
+    <div class="modal-row"><div class="modal-key">Tipo</div><div class="modal-val" id="md-tipo"></div></div>
+    <div class="modal-row"><div class="modal-key">Fuente</div><div class="modal-val" id="md-fuente"></div></div>
+    <div class="modal-row"><div class="modal-key">Prioridad</div><div class="modal-val" id="md-prioridad"></div></div>
+    <div class="modal-row"><div class="modal-key">Descripción</div><div class="modal-val" id="md-descripcion" style="white-space:pre-wrap;color:var(--text-muted);font-size:13px;"></div></div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Editar campos</div>
+
+      <div class="modal-row" style="margin-bottom:14px">
+        <div class="modal-key">Ingeniero</div>
+        <select class="modal-select" id="md-ingeniero">
+          <option value="">— Sin asignar —</option>
+          <option>SAUL</option><option>EDEL</option><option>AMADO</option>
+          <option>CECILIA</option><option>ERICK</option><option>PAUL</option><option>MILCIADES</option>
+        </select>
+      </div>
+
+      <div class="modal-row" style="margin-bottom:14px">
+        <div class="modal-key">Estado</div>
+        <select class="modal-select" id="md-estado">
+          <option>Abierto</option>
+          <option>En progreso</option>
+          <option>Cerrado</option>
+        </select>
+      </div>
+
+      <div class="modal-date-row">
+        <div>
+          <div class="modal-date-label">Fecha inicio trabajo</div>
+          <input type="date" class="modal-date-input" id="md-fecha-inicio"/>
+        </div>
+        <div>
+          <div class="modal-date-label">Fecha solución</div>
+          <input type="date" class="modal-date-input" id="md-fecha-solucion"/>
+        </div>
+      </div>
+
+      <div class="modal-date-label" style="margin-bottom:6px">Comentarios / Actualizaciones</div>
+      <textarea class="modal-textarea" id="md-comentarios" placeholder="Escribe aquí el progreso, notas o actualizaciones del ingeniero…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-btn primary" onclick="guardarCambios()">💾 Guardar cambios</button>
+      <button class="modal-btn secondary" onclick="closeModalEditar()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal historial eliminados -->
+<div class="modal-backdrop" id="modal-historial" onclick="closeModalHistorial(event)">
+  <div class="modal" style="max-width:700px">
+    <h2>🗑 Historial de tickets eliminados</h2>
+    <div id="hist-contenido"></div>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="closeModalHistorial()">Cerrar</button>
+    </div>
   </div>
 </div>
 
@@ -166,7 +245,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, onValue, update, remove, push, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDkrdNWC_GJnawDnyb31Y0Y18xMWcC0Gyk",
@@ -175,33 +254,33 @@
     projectId: "csi-abcorp",
     storageBucket: "csi-abcorp.firebasestorage.app",
     messagingSenderId: "179973833087",
-    appId: "1:179973833087:web:7b53167728abdf4af79a4a",
-    measurementId: "G-SPPPWYZW55"
+    appId: "1:179973833087:web:7b53167728abdf4af79a4a"
   };
 
   const app = initializeApp(firebaseConfig);
   const db  = getDatabase(app);
 
-  const INGENIEROS = ['SAUL','EDEL','AMADO','CECILIA','ERICK','PAUL','MILCIADES'];
-  let ticketsMap = {}; // { firebaseKey: ticketObj }
+  let ticketsMap  = {};
+  let eliminadosMap = {};
+  let editKey = null;
 
-  // Escuchar cambios en tiempo real
-  onValue(ref(db, 'tickets'), (snap) => {
+  // ── Escuchar tickets activos ──
+  onValue(ref(db, 'tickets'), snap => {
     ticketsMap = {};
-    if (snap.exists()) {
-      snap.forEach(child => {
-        ticketsMap[child.key] = { _key: child.key, ...child.val() };
-      });
-    }
-    updateKPIs();
-    renderTabla();
+    if (snap.exists()) snap.forEach(c => { ticketsMap[c.key] = { _key: c.key, ...c.val() }; });
+    updateKPIs(); renderTabla();
     document.getElementById('loading').style.display = 'none';
     document.getElementById('tabla').style.display = 'table';
-    document.getElementById('last-update').textContent =
-      'Última actualización: ' + new Date().toLocaleString('es-MX');
+    document.getElementById('last-update').textContent = 'Última actualización: ' + new Date().toLocaleString('es-MX');
   });
 
-  function tickets() { return Object.values(ticketsMap); }
+  // ── Escuchar historial eliminados ──
+  onValue(ref(db, 'eliminados'), snap => {
+    eliminadosMap = {};
+    if (snap.exists()) snap.forEach(c => { eliminadosMap[c.key] = { _key: c.key, ...c.val() }; });
+  });
+
+  function tickets() { return Object.values(ticketsMap).sort((a,b) => new Date(b.fechaReporte) - new Date(a.fechaReporte)); }
 
   function updateKPIs() {
     const list = tickets();
@@ -213,13 +292,27 @@
 
   function fmtDate(iso) {
     if (!iso) return '—';
+    // Si es formato yyyy-mm-dd (de input date)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+      const [y,m,d] = iso.split('-');
+      return d + '/' + m + '/' + y;
+    }
     return new Date(iso).toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function toDateInput(iso) {
+    if (!iso) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toISOString().slice(0,10);
   }
 
   function calcDias(t) {
     if (!t.fechaReporte) return null;
-    const end = t.fechaSolucion ? new Date(t.fechaSolucion) : new Date();
-    return Math.floor((end - new Date(t.fechaReporte)) / 86400000);
+    const start = new Date(t.fechaReporte);
+    const end   = t.fechaSolucion ? new Date(t.fechaSolucion) : new Date();
+    return Math.max(0, Math.floor((end - start) / 86400000));
   }
 
   function diasClass(d, cerrado) {
@@ -227,27 +320,7 @@
     return d <= 3 ? 'dias-ok' : d <= 7 ? 'dias-warn' : 'dias-bad';
   }
 
-  window.asignarIngeniero = async function(key, valor) {
-    await update(ref(db, 'tickets/' + key), { ingeniero: valor });
-    showToast('Ingeniero actualizado');
-  };
-
-  window.marcarInicio = async function(key) {
-    await update(ref(db, 'tickets/' + key), { estado: 'En progreso', fechaInicio: new Date().toISOString() });
-    showToast('Ticket marcado como En progreso');
-  };
-
-  window.marcarCierre = async function(key) {
-    await update(ref(db, 'tickets/' + key), { estado: 'Cerrado', fechaSolucion: new Date().toISOString() });
-    showToast('Ticket cerrado correctamente');
-  };
-
-  window.eliminar = async function(key, id) {
-    if (!confirm('¿Eliminar el ticket ' + id + '? Esta acción no se puede deshacer.')) return;
-    await remove(ref(db, 'tickets/' + key));
-    showToast(id + ' eliminado');
-  };
-
+  // ── Render tabla ──
   window.renderTabla = function() {
     const buscar    = document.getElementById('buscar').value.toLowerCase();
     const estado    = document.getElementById('filtro-estado').value;
@@ -255,108 +328,161 @@
     const ingeniero = document.getElementById('filtro-ingeniero').value;
 
     let lista = tickets().filter(t => {
-      const txt = ((t.id||'') + (t.cliente||'') + (t.tipo||'') + (t.descripcion||'')).toLowerCase();
+      const txt = ((t.id||'')+(t.cliente||'')+(t.tipo||'')+(t.descripcion||'')).toLowerCase();
       return (!buscar    || txt.includes(buscar))
           && (!estado    || t.estado === estado)
           && (!prioridad || t.prioridad === prioridad)
           && (!ingeniero || t.ingeniero === ingeniero);
     });
 
-    // Ordenar: más recientes primero
-    lista.sort((a,b) => new Date(b.fechaReporte) - new Date(a.fechaReporte));
-
     const tbody = document.getElementById('tabla-body');
     const empty = document.getElementById('empty-state');
-
     if (lista.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
     empty.style.display = 'none';
+
+    const pBadge = { 'Baja':'badge-baja','Media':'badge-media','Alta':'badge-alta' };
+    const eBadge = { 'Abierto':'badge-abierto','En progreso':'badge-progreso','Cerrado':'badge-cerrado' };
 
     tbody.innerHTML = lista.map(t => {
       const dias   = calcDias(t);
       const dClass = dias !== null ? diasClass(dias, t.estado === 'Cerrado') : '';
-      const eBadge = { 'Abierto':'badge-abierto','En progreso':'badge-progreso','Cerrado':'badge-cerrado' }[t.estado] || 'badge-abierto';
-      const pBadge = { 'Baja':'badge-baja','Media':'badge-media','Alta':'badge-alta' }[t.prioridad] || '';
-
-      const ingOpts = ['', ...INGENIEROS].map(i =>
-        `<option value="${i}" ${t.ingeniero === i ? 'selected' : ''}>${i || '— Sin asignar —'}</option>`
-      ).join('');
-      const ingCell = `<select class="assign-select" onchange="asignarIngeniero('${t._key}', this.value)">${ingOpts}</select>`;
-
-      const btnInicio = t.estado === 'Abierto'
-        ? `<button class="action-btn start" onclick="marcarInicio('${t._key}')">▶ Iniciar</button>` : '';
-      const btnCerrar = t.estado === 'En progreso'
-        ? `<button class="action-btn close-btn" onclick="marcarCierre('${t._key}')">✓ Cerrar</button>` : '';
-      const btnVer  = `<button class="action-btn" onclick="verDetalle('${t._key}')">👁 Ver</button>`;
-      const btnDel  = `<button class="action-btn del" onclick="eliminar('${t._key}','${t.id}')">✕</button>`;
-
       return `<tr>
         <td><strong style="color:var(--solar-gold)">${t.id}</strong></td>
         <td>${t.cliente}</td>
-        <td style="max-width:120px;word-break:break-word">${t.tipo}</td>
-        <td><span class="badge ${pBadge}">${t.prioridad}</span></td>
-        <td style="font-size:12px;color:var(--text-muted)">${t.fuente}</td>
-        <td>${ingCell}</td>
-        <td>${fmtDate(t.fechaReporte)}</td>
-        <td>${fmtDate(t.fechaInicio)}</td>
-        <td>${fmtDate(t.fechaSolucion)}</td>
-        <td class="dias-badge ${dClass}">${dias !== null ? dias + (t.estado === 'Cerrado' ? ' d' : ' d ⏳') : '—'}</td>
-        <td><span class="badge ${eBadge}">${t.estado}</span></td>
-        <td>${btnInicio}${btnCerrar}${btnVer}${btnDel}</td>
+        <td style="max-width:120px;word-break:break-word;font-size:12px">${t.tipo}</td>
+        <td><span class="badge ${pBadge[t.prioridad]||''}">${t.prioridad}</span></td>
+        <td style="font-size:11px;color:var(--text-muted)">${t.fuente}</td>
+        <td style="font-size:12px">${t.ingeniero || '<span style="color:var(--danger);font-size:11px">Sin asignar</span>'}</td>
+        <td><span class="badge ${eBadge[t.estado]||'badge-abierto'}">${t.estado}</span></td>
+        <td style="font-size:12px">${fmtDate(t.fechaReporte)}</td>
+        <td style="font-size:12px">${fmtDate(t.fechaInicio)}</td>
+        <td style="font-size:12px">${fmtDate(t.fechaSolucion)}</td>
+        <td class="dias-badge ${dClass}">${dias !== null ? dias+(t.estado==='Cerrado'?' d':' d ⏳') : '—'}</td>
+        <td>
+          <button class="action-btn" onclick="abrirEditar('${t._key}')">✏️ Editar</button>
+          <button class="action-btn del" onclick="eliminar('${t._key}','${t.id}')">🗑</button>
+        </td>
       </tr>`;
     }).join('');
   };
 
-  window.verDetalle = function(key) {
+  // ── Abrir modal editar ──
+  window.abrirEditar = function(key) {
     const t = ticketsMap[key];
     if (!t) return;
-    const dias = calcDias(t);
-    document.getElementById('modal-title').textContent = t.id + ' — ' + t.cliente;
-    document.getElementById('modal-content').innerHTML = `
-      <div class="modal-row"><div class="modal-key">Tipo</div><div class="modal-val">${t.tipo}</div></div>
-      <div class="modal-row"><div class="modal-key">Fuente</div><div class="modal-val">${t.fuente}</div></div>
-      <div class="modal-row"><div class="modal-key">Prioridad</div><div class="modal-val">${t.prioridad}</div></div>
-      <div class="modal-row"><div class="modal-key">Ingeniero</div><div class="modal-val">${t.ingeniero || 'Sin asignar'}</div></div>
-      <div class="modal-row"><div class="modal-key">Estado</div><div class="modal-val">${t.estado}</div></div>
-      <div class="modal-row"><div class="modal-key">Fecha reporte</div><div class="modal-val">${fmtDate(t.fechaReporte)}</div></div>
-      <div class="modal-row"><div class="modal-key">Inicio trabajo</div><div class="modal-val">${fmtDate(t.fechaInicio)}</div></div>
-      <div class="modal-row"><div class="modal-key">Fecha solución</div><div class="modal-val">${fmtDate(t.fechaSolucion)}</div></div>
-      <div class="modal-row"><div class="modal-key">Días transcurridos</div><div class="modal-val">${dias !== null ? dias + ' días' : '—'}</div></div>
-      <div class="modal-desc"><div class="modal-key" style="margin-bottom:8px">Descripción</div><p>${t.descripcion || '—'}</p></div>
-      <div class="modal-desc"><div class="modal-key" style="margin-bottom:8px">Comentarios</div><p>${t.comentarios || '—'}</p></div>
-    `;
-    const actions = document.getElementById('modal-actions');
-    actions.innerHTML = '';
-    if (t.estado === 'Abierto') {
-      const b = document.createElement('button');
-      b.className = 'modal-btn primary'; b.textContent = '▶ Marcar como En progreso';
-      b.onclick = () => { window.marcarInicio(key); closeModal(); };
-      actions.appendChild(b);
-    }
-    if (t.estado === 'En progreso') {
-      const b = document.createElement('button');
-      b.className = 'modal-btn success'; b.textContent = '✓ Marcar como Cerrado';
-      b.onclick = () => { window.marcarCierre(key); closeModal(); };
-      actions.appendChild(b);
-    }
-    const bc = document.createElement('button');
-    bc.className = 'modal-btn secondary'; bc.textContent = 'Cerrar';
-    bc.onclick = closeModal;
-    actions.appendChild(bc);
-    document.getElementById('modal-backdrop').classList.add('open');
+    editKey = key;
+    document.getElementById('modal-titulo').textContent = t.id + ' — ' + t.cliente;
+    document.getElementById('md-cliente').textContent   = t.cliente;
+    document.getElementById('md-tipo').textContent      = t.tipo;
+    document.getElementById('md-fuente').textContent    = t.fuente;
+    document.getElementById('md-prioridad').textContent = t.prioridad;
+    document.getElementById('md-descripcion').textContent = t.descripcion || '—';
+    document.getElementById('md-ingeniero').value       = t.ingeniero || '';
+    document.getElementById('md-estado').value          = t.estado || 'Abierto';
+    document.getElementById('md-fecha-inicio').value    = toDateInput(t.fechaInicio);
+    document.getElementById('md-fecha-solucion').value  = toDateInput(t.fechaSolucion);
+    document.getElementById('md-comentarios').value     = t.comentarios || '';
+    document.getElementById('modal-editar').classList.add('open');
   };
 
-  window.closeModal = function(e) {
-    if (!e || e.target === document.getElementById('modal-backdrop'))
-      document.getElementById('modal-backdrop').classList.remove('open');
+  window.guardarCambios = async function() {
+    if (!editKey) return;
+    const ingeniero   = document.getElementById('md-ingeniero').value;
+    const estado      = document.getElementById('md-estado').value;
+    const fechaInicio = document.getElementById('md-fecha-inicio').value;
+    const fechaSol    = document.getElementById('md-fecha-solucion').value;
+    const comentarios = document.getElementById('md-comentarios').value.trim();
+
+    await update(ref(db, 'tickets/' + editKey), {
+      ingeniero,
+      estado,
+      fechaInicio:   fechaInicio || '',
+      fechaSolucion: fechaSol || '',
+      comentarios
+    });
+
+    closeModalEditar();
+    showToast('Ticket actualizado correctamente');
+  };
+
+  window.closeModalEditar = function(e) {
+    if (!e || e.target === document.getElementById('modal-editar'))
+      document.getElementById('modal-editar').classList.remove('open');
+  };
+
+  // ── Eliminar → mover a historial ──
+  window.eliminar = async function(key, id) {
+    if (!confirm('¿Eliminar el ticket ' + id + '?\nQuedará guardado en el historial de eliminados.')) return;
+    const t = ticketsMap[key];
+    if (!t) return;
+    // Guardar en historial
+    await push(ref(db, 'eliminados'), {
+      ...t,
+      fechaEliminado: new Date().toISOString()
+    });
+    // Eliminar de tickets activos
+    await remove(ref(db, 'tickets/' + key));
+    showToast(id + ' movido al historial');
+  };
+
+  // ── Historial eliminados ──
+  window.abrirHistorial = function() {
+    const lista = Object.values(eliminadosMap).sort((a,b) => new Date(b.fechaEliminado) - new Date(a.fechaEliminado));
+    const cont = document.getElementById('hist-contenido');
+
+    if (lista.length === 0) {
+      cont.innerHTML = '<div class="empty"><div class="icon">✅</div><p>No hay tickets eliminados.</p></div>';
+    } else {
+      cont.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--solar-line)">
+              <th style="text-align:left;padding:8px;color:var(--text-muted);font-size:11px;text-transform:uppercase">ID</th>
+              <th style="text-align:left;padding:8px;color:var(--text-muted);font-size:11px;text-transform:uppercase">Cliente</th>
+              <th style="text-align:left;padding:8px;color:var(--text-muted);font-size:11px;text-transform:uppercase">Tipo</th>
+              <th style="text-align:left;padding:8px;color:var(--text-muted);font-size:11px;text-transform:uppercase">Estado</th>
+              <th style="text-align:left;padding:8px;color:var(--text-muted);font-size:11px;text-transform:uppercase">Eliminado</th>
+              <th style="padding:8px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(t => `
+              <tr style="border-top:1px solid var(--solar-line)">
+                <td style="padding:8px;color:var(--solar-gold);font-weight:700">${t.id}</td>
+                <td style="padding:8px">${t.cliente}</td>
+                <td style="padding:8px;color:var(--text-muted)">${t.tipo}</td>
+                <td style="padding:8px"><span class="hist-badge">${t.estado}</span></td>
+                <td style="padding:8px;color:var(--text-muted)">${fmtDate(t.fechaEliminado)}</td>
+                <td style="padding:8px"><button class="restore-btn" onclick="restaurar('${t._key}','${t.id}')">↩ Restaurar</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    }
+    document.getElementById('modal-historial').classList.add('open');
+  };
+
+  window.restaurar = async function(key, id) {
+    const t = eliminadosMap[key];
+    if (!t) return;
+    const { _key, fechaEliminado, ...datos } = t;
+    await push(ref(db, 'tickets'), datos);
+    await remove(ref(db, 'eliminados/' + key));
+    closeModalHistorial();
+    showToast(id + ' restaurado correctamente');
+  };
+
+  window.closeModalHistorial = function(e) {
+    if (!e || e.target === document.getElementById('modal-historial'))
+      document.getElementById('modal-historial').classList.remove('open');
   };
 
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = '✓ ' + msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+    setTimeout(() => t.classList.remove('show'), 3200);
   }
-  window.showToast = showToast;
 </script>
 </body>
 </html>
